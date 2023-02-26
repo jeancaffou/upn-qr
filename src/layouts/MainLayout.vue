@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          UPN QR
+          UPN QR Generator
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
