@@ -4,6 +4,7 @@
       <div class="q-pa-sm">
         <div class="text-h6">UPN QR Generator</div>
         <a href="https://github.com/jeancaffou/upn-qr">https://github.com/jeancaffou/upn-qr</a>
+        <q-slider v-model="size" :min="150" :max="800" color="secondary" />
       </div>
       <div class="row q-col-gutter-sm full-width">
         <div class="col-lg-4 col-xs-12">
@@ -39,8 +40,8 @@
       </div>
     </div>
     <div class="column">
-      <vue-qr :callback="dataURI" :text="qr" :size="250" />
-      <q-btn icon="save" label="Shrani" @click="save" color="primary" v-if="img" />
+      <vue-qr :callback="dataURI" :text="qr" :size="size" />
+      <q-btn icon="save" label="Shrani" @click="save" color="secondary" v-if="img" />
     </div>
   </q-page>
 </template>
@@ -64,7 +65,8 @@ export default {
       koda: 'GDSV',
       namen: null
     },
-    img: null
+    img: null,
+    size: 250
   }),
   created () {
     try {
@@ -124,7 +126,9 @@ export default {
     upn: {
       deep: true,
       handler (v) {
-        localStorage.setItem('upn', JSON.stringify(v))
+        const upn = JSON.stringify(v)
+        localStorage.setItem('upn', upn)
+        this.$router.replace({})
       }
     }
   }
