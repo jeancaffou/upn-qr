@@ -80,6 +80,15 @@ export default {
     } catch (e) {
       console.warn(e)
     }
+    try {
+      const upn = JSON.parse(this.$route.query.upn)
+      this.upn = {
+        ...this.upn,
+        ...upn
+      }
+    } catch (e) {
+      console.warn(e)
+    }
   },
   computed: {
     qr () {
@@ -128,7 +137,7 @@ export default {
       handler (v) {
         const upn = JSON.stringify(v)
         localStorage.setItem('upn', upn)
-        this.$router.replace({})
+        this.$router.replace({ name: 'qr', query: { upn } })
       }
     }
   }

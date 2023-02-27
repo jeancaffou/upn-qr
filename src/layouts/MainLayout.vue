@@ -4,7 +4,7 @@
       <q-toolbar>
         <q-toolbar-title>
           <q-avatar square size="28px">
-            <img src="public/icons/favicon-96x96.png" />
+            <img src="icons/favicon-96x96.png" />
           </q-avatar>
           UPN QR Generator
         </q-toolbar-title>
