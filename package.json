@@ -3,11 +3,11 @@
   "version": "0.0.1",
   "description": "Generiranje QR kode za UPN nalog",
   "productName": "UPN QR",
-  "author": "jeancaffou <jean@briskula.si>",
+  "author": "jeancaffou",
   "private": true,
   "scripts": {
     "dev": "quasar dev",
-    "build": "quasar build -m spa"
+    "build": "quasar build -m pwa"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
