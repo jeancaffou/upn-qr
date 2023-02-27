@@ -40,17 +40,17 @@
       </div>
     </div>
     <div class="column">
-      <vue-qr :callback="dataURI" :text="qr" :size="size" />
-      <q-btn icon="save" label="Shrani" @click="save" color="secondary" v-if="img" />
+      <img v-if="src" :src="src" :width="size" />
+      <q-btn icon="save" label="Shrani" @click="save" color="secondary" v-if="src" />
     </div>
   </q-page>
 </template>
 
 <script>
-import vueQr from 'vue-qr/src/packages/vue-qr.vue'
+import { Encoder, ErrorCorrectionLevel } from '@nuintun/qrcode'
 export default {
-  components: { vueQr },
   data: () => ({
+    src: null,
     upn: {
       prejemnik: null,
       name: null,
@@ -104,11 +104,11 @@ export default {
         String(Math.floor(Number(`${this.upn.znesek}`.replace(',', '.')) * 100)).padStart(11, '0'), // 9. Znesek 11 Obvezno (**). Enajst cifer.
         '', // 10. Datum plačila Prazno.
         '', // 11. Nujno Prazno.
-        (this.upn.koda || '').trim(), // 12. Koda namena 4 Obvezno. Štiri velike črke (A-Z).
+        (this.upn.koda || '').replace(/[^A-Z]/g, '').trim(), // 12. Koda namena 4 Obvezno. Štiri velike črke (A-Z).
         (this.upn.namen || '').trim(), // 13. Namen plačila 42 Obvezno. Brez vodilnih ali sledečih presledkov.
         (this.upn.date || '').trim(), // 14. Rok plačila 10 Poljubno. Format »DD.MM.LLLL« ali prazno.
-        (this.upn.trr || '').trim(), // 15. IBAN prejemnika 34 Obvezno. Brez formatiranja (brez vmesnih presledkov).
-        (this.upn.ref || '').trim(), // 16. Referenca prejemnika 26 Obvezno. (4+22) Model in sklic skupaj brez presledkov.
+        (this.upn.trr || '').replace(/\s+/g, '').trim(), // 15. IBAN prejemnika 34 Obvezno. Brez formatiranja (brez vmesnih presledkov).
+        (this.upn.ref || '').replace(/\s+/g, '').trim(), // 16. Referenca prejemnika 26 Obvezno. (4+22) Model in sklic skupaj brez presledkov.
         (this.upn.prejemnik || '').trim(), // 17. Ime prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
         (this.upn.prnaslov || '').trim(), // 18. Ulica in št. prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
         (this.upn.prposta || '').trim() // 19. Kraj prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
@@ -119,13 +119,10 @@ export default {
     }
   },
   methods: {
-    dataURI (uri) {
-      this.img = uri
-    },
     save () {
       const link = document.createElement('a')
       link.download = 'qr.png'
-      link.href = this.img
+      link.href = this.src
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -138,6 +135,16 @@ export default {
         const upn = JSON.stringify(v)
         localStorage.setItem('upn', upn)
         this.$router.replace({ name: 'qr', query: { upn } })
+
+        const qrcode = new Encoder()
+        qrcode.setEncodingHint(true)
+        qrcode.setErrorCorrectionLevel(ErrorCorrectionLevel.H)
+        qrcode.write(this.qr)
+
+        qrcode.make()
+
+        this.src = qrcode.toDataURL()
+        console.log(this.src)
       }
     }
   }
