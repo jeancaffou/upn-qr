@@ -8,15 +8,15 @@
       </div>
       <div class="row q-col-gutter-sm full-width">
         <div class="col-lg-4 col-xs-12">
-          <q-input v-model="upn.name" label="Ime plačnika" filled clearable />
-          <q-input v-model="upn.naslov" label="Naslov plačnika" filled clearable />
-          <q-input v-model="upn.posta" label="Pošta in kraj plačnika" filled clearable />
+          <q-input v-model="upn.name" label="Ime plačnika" filled clearable :rules="rule33" />
+          <q-input v-model="upn.naslov" label="Naslov plačnika" filled clearable :rules="rule33" />
+          <q-input v-model="upn.posta" label="Pošta in kraj plačnika" filled clearable :rules="rule33" />
         </div>
         <div class="col-lg-4 col-xs-12">
-          <q-input v-model="upn.prejemnik" label="Ime prejemnika" filled clearable />
-          <q-input v-model="upn.prnaslov" label="Naslov prejemnika" filled clearable />
-          <q-input v-model="upn.prposta" label="Pošta in kraj prejemnika" filled clearable />
-          <q-input v-model="upn.date" label="Rok plačila" filled clearable>
+          <q-input v-model="upn.prejemnik" label="Ime prejemnika" filled clearable :rules="rule33" />
+          <q-input v-model="upn.prnaslov" label="Naslov prejemnika" filled clearable :rules="rule33" />
+          <q-input v-model="upn.prposta" label="Pošta in kraj prejemnika" filled clearable :rules="rule33" />
+          <q-input v-model="upn.date" label="Rok plačila" mask="##.##.####" filled clearable>
             <template v-slot:append>
               <q-icon name="event" class="cursor-pointer">
                 <q-popup-proxy transition-show="scale" transition-hide="scale">
@@ -31,11 +31,11 @@
           </q-input>
         </div>
         <div class="col-lg-4 col-xs-12">
-          <q-input v-model="upn.koda" label="Koda" filled clearable />
-          <q-input v-model="upn.namen" label="Namen" filled clearable />
-          <q-input v-model="upn.znesek" label="Znesek" filled clearable />
-          <q-input v-model="upn.trr" label="TRR" filled clearable />
-          <q-input v-model="upn.ref" label="Referenca" filled clearable />
+          <q-input v-model="upn.koda" mask="AAAA" label="Koda" filled clearable />
+          <q-input v-model="upn.namen" label="Namen" filled clearable :rules="[val => val.length <= 42 || 'Največ 42 znakov']" />
+          <q-input v-model="upn.znesek" label="Znesek" filled clearable mask="#,##" fill-mask="0" reverse-fill-mask />
+          <q-input v-model="upn.trr" label="TRR" filled clearable :rules="[val => val.length <= 34 || 'Največ 34 znakov']" />
+          <q-input v-model="upn.ref" label="Referenca" filled clearable :rules="[val => val.length <= 26 || 'Največ 26 znakov']" />
         </div>
       </div>
     </div>
@@ -60,11 +60,12 @@ export default {
       prposta: null,
       date: null,
       trr: null,
-      ref: null,
+      ref: 'SI99',
       znesek: 0,
       koda: 'GDSV',
       namen: null
     },
+    rule33: [val => val.length <= 33 || 'Največ 33 znakov'],
     img: null,
     size: 250
   }),
@@ -98,20 +99,20 @@ export default {
         '', // 3. Polog Prazno.
         '', // 4. Dvig Prazno.
         '', // 5. Referenca plačnika Prazno.
-        (this.upn.name || '').trim(), // 6. Ime plačnika Obvezno (*). Brez vodilnih ali sledečih presledkov. Max 33 znakov
-        (this.upn.naslov || '').trim(), // 7. Ulica in št. plačnika 33 Obvezno (*). Brez vodilnih ali sledečih presledkov.
-        (this.upn.posta || '').trim(), // 8. Kraj plačnika 33 Obvezno (*). Brez vodilnih ali sledečih presledkov.
+        (this.upn.name || '').trim().substring(0, 33), // 6. Ime plačnika Obvezno (*). Brez vodilnih ali sledečih presledkov. Max 33 znakov
+        (this.upn.naslov || '').trim().substring(0, 33), // 7. Ulica in št. plačnika 33 Obvezno (*). Brez vodilnih ali sledečih presledkov.
+        (this.upn.posta || '').trim().substring(0, 33), // 8. Kraj plačnika 33 Obvezno (*). Brez vodilnih ali sledečih presledkov.
         String(Math.floor(Number(`${this.upn.znesek}`.replace(',', '.')) * 100)).padStart(11, '0'), // 9. Znesek 11 Obvezno (**). Enajst cifer.
         '', // 10. Datum plačila Prazno.
         '', // 11. Nujno Prazno.
-        (this.upn.koda || '').replace(/[^A-Z]/g, '').trim(), // 12. Koda namena 4 Obvezno. Štiri velike črke (A-Z).
-        (this.upn.namen || '').trim(), // 13. Namen plačila 42 Obvezno. Brez vodilnih ali sledečih presledkov.
-        (this.upn.date || '').trim(), // 14. Rok plačila 10 Poljubno. Format »DD.MM.LLLL« ali prazno.
-        (this.upn.trr || '').replace(/\s+/g, '').trim(), // 15. IBAN prejemnika 34 Obvezno. Brez formatiranja (brez vmesnih presledkov).
-        (this.upn.ref || '').replace(/\s+/g, '').trim(), // 16. Referenca prejemnika 26 Obvezno. (4+22) Model in sklic skupaj brez presledkov.
-        (this.upn.prejemnik || '').trim(), // 17. Ime prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
-        (this.upn.prnaslov || '').trim(), // 18. Ulica in št. prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
-        (this.upn.prposta || '').trim() // 19. Kraj prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
+        (this.upn.koda || '').replace(/[^A-Z]/g, '').trim().substring(0, 4).toUpperCase(), // 12. Koda namena 4 Obvezno. Štiri velike črke (A-Z).
+        (this.upn.namen || '').trim().substring(0, 42), // 13. Namen plačila 42 Obvezno. Brez vodilnih ali sledečih presledkov.
+        (this.upn.date || '').trim().substring(0, 10), // 14. Rok plačila 10 Poljubno. Format »DD.MM.LLLL« ali prazno.
+        (this.upn.trr || '').replace(/\s+/g, '').trim().substring(0, 34).toUpperCase(), // 15. IBAN prejemnika 34 Obvezno. Brez formatiranja (brez vmesnih presledkov).
+        (this.upn.ref || '').replace(/\s+/g, '').trim().substring(0, 26).toUpperCase(), // 16. Referenca prejemnika 26 Obvezno. (4+22) Model in sklic skupaj brez presledkov.
+        (this.upn.prejemnik || '').trim().substring(0, 33), // 17. Ime prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
+        (this.upn.prnaslov || '').trim().substring(0, 33), // 18. Ulica in št. prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
+        (this.upn.prposta || '').trim().substring(0, 33) // 19. Kraj prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
       ]
       // 20. Kontrolna vsota 3 Obvezno. Tri cifre.
       fields.push(String(19 + fields.reduce((a, v) => a + v.length, 0)).padStart(3, '0'), '')
@@ -135,7 +136,7 @@ export default {
 
       qrcode.make()
 
-      this.src = qrcode.toDataURL(5, 0)
+      this.src = qrcode.toDataURL(1, 0)
     }
   },
   watch: {
