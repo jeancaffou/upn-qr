@@ -40,8 +40,8 @@
       </div>
     </div>
     <div class="column">
-      <img v-if="src" :src="src" :width="size" />
-      <q-btn icon="save" label="Shrani" @click="save" color="secondary" v-if="src" />
+      <img v-if="src" :src="src" :width="size" :height="size" style="image-rendering: pixelated" />
+      <q-btn icon="save" label="Shrani" @click="save" color="secondary" v-if="src" class="q-my-md" />
     </div>
   </q-page>
 </template>
@@ -121,11 +121,21 @@ export default {
   methods: {
     save () {
       const link = document.createElement('a')
-      link.download = 'qr.png'
+      link.download = 'qr.gif'
       link.href = this.src
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+    },
+    gen () {
+      const qrcode = new Encoder()
+      qrcode.setEncodingHint(true)
+      qrcode.setErrorCorrectionLevel(ErrorCorrectionLevel.H)
+      qrcode.write(this.qr)
+
+      qrcode.make()
+
+      this.src = qrcode.toDataURL(5, 0)
     }
   },
   watch: {
@@ -134,17 +144,12 @@ export default {
       handler (v) {
         const upn = JSON.stringify(v)
         localStorage.setItem('upn', upn)
-        this.$router.replace({ name: 'qr', query: { upn } })
+        this.$router.replace({
+          name: 'qr',
+          query: { upn }
+        })
 
-        const qrcode = new Encoder()
-        qrcode.setEncodingHint(true)
-        qrcode.setErrorCorrectionLevel(ErrorCorrectionLevel.H)
-        qrcode.write(this.qr)
-
-        qrcode.make()
-
-        this.src = qrcode.toDataURL()
-        console.log(this.src)
+        this.gen()
       }
     }
   }
