@@ -105,11 +105,11 @@ export default {
         String(Math.floor(Number(`${this.upn.znesek}`.replace(',', '.')) * 100)).padStart(11, '0'), // 9. Znesek 11 Obvezno (**). Enajst cifer.
         '', // 10. Datum plačila Prazno.
         '', // 11. Nujno Prazno.
-        (this.upn.koda || '').replace(/[^A-Z]/g, '').trim().substring(0, 4).toUpperCase(), // 12. Koda namena 4 Obvezno. Štiri velike črke (A-Z).
+        (this.upn.koda || '').replace(/[^A-Z]/g, '').substring(0, 4).toUpperCase(), // 12. Koda namena 4 Obvezno. Štiri velike črke (A-Z).
         (this.upn.namen || '').trim().substring(0, 42), // 13. Namen plačila 42 Obvezno. Brez vodilnih ali sledečih presledkov.
         (this.upn.date || '').trim().substring(0, 10), // 14. Rok plačila 10 Poljubno. Format »DD.MM.LLLL« ali prazno.
-        (this.upn.trr || '').replace(/\s+/g, '').trim().substring(0, 34).toUpperCase(), // 15. IBAN prejemnika 34 Obvezno. Brez formatiranja (brez vmesnih presledkov).
-        (this.upn.ref || '').replace(/\s+/g, '').trim().substring(0, 26).toUpperCase(), // 16. Referenca prejemnika 26 Obvezno. (4+22) Model in sklic skupaj brez presledkov.
+        (this.upn.trr || '').replace(/\s+/g, '').substring(0, 34).toUpperCase(), // 15. IBAN prejemnika 34 Obvezno. Brez formatiranja (brez vmesnih presledkov).
+        (this.upn.ref || '').replace(/\s+/g, '').substring(0, 26).toUpperCase(), // 16. Referenca prejemnika 26 Obvezno. (4+22) Model in sklic skupaj brez presledkov.
         (this.upn.prejemnik || '').trim().substring(0, 33), // 17. Ime prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
         (this.upn.prnaslov || '').trim().substring(0, 33), // 18. Ulica in št. prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
         (this.upn.prposta || '').trim().substring(0, 33) // 19. Kraj prejemnika 33 Obvezno. Brez vodilnih ali sledečih presledkov.
@@ -141,6 +141,7 @@ export default {
   },
   watch: {
     upn: {
+      immediate: true,
       deep: true,
       handler (v) {
         const upn = JSON.stringify(v)
