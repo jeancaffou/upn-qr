@@ -40,7 +40,7 @@
       </div>
     </div>
     <div class="column">
-      <img v-if="src" :src="src" :width="size" :height="size" style="image-rendering: pixelated" />
+      <img v-if="src" :src="src" :width="size" :height="size" style="image-rendering: pixelated" id="qr" />
       <q-btn icon="save" label="Shrani" @click="save" color="secondary" v-if="src" class="q-my-md" />
     </div>
   </q-page>
@@ -121,12 +121,29 @@ export default {
   },
   methods: {
     save () {
-      const link = document.createElement('a')
-      link.download = 'qr.gif'
-      link.href = this.src
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      const originalImage = document.getElementById('qr')
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+
+      canvas.width = originalImage.width + 30
+      canvas.height = originalImage.height + 30
+
+      ctx.imageSmoothingEnabled = false
+      ctx.drawImage(originalImage, 15, 15, originalImage.width, originalImage.height)
+
+      ctx.strokeStyle = 'white'
+      ctx.lineWidth = 30
+      ctx.strokeRect(0, 0, canvas.width, canvas.height)
+
+      const outputImage = new Image()
+      outputImage.src = canvas.toDataURL('image/jpeg')
+
+      outputImage.onload = function () {
+        const link = document.createElement('a')
+        link.href = outputImage.src
+        link.download = 'qr.gif'
+        link.click()
+      }
     },
     gen () {
       const qrcode = new Encoder()
