@@ -71,7 +71,7 @@ export default {
   }),
   created () {
     try {
-      const cache = JSON.parse(localStorage.getItem('upn'))
+      const cache = JSON.parse(decodeURIComponent(localStorage.getItem('upn')))
       if (cache) {
         this.upn = {
           ...this.upn,
@@ -82,7 +82,7 @@ export default {
       console.warn(e)
     }
     try {
-      const upn = JSON.parse(this.$route.query.upn)
+      const upn = JSON.parse(decodeURIComponent(this.$route.query.upn))
       this.upn = {
         ...this.upn,
         ...upn
@@ -161,7 +161,7 @@ export default {
       immediate: true,
       deep: true,
       handler (v) {
-        const upn = JSON.stringify(v)
+        const upn = encodeURIComponent(JSON.stringify(v))
         localStorage.setItem('upn', upn)
         this.$router.replace({
           name: 'qr',
