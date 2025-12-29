@@ -13,6 +13,14 @@
 
         <q-btn flat icon="upload_file" label="Import XML" @click="pickXml" />
 
+        <q-btn
+          flat
+          round
+          icon="fab fa-github"
+          aria-label="GitHub"
+          @click="openGithub"
+        />
+
         <input
           ref="xmlInput"
           type="file"
@@ -34,6 +42,9 @@ import { readXmlFileAsText, parseUpnFromPainXml } from 'src/utils/upnXmlImport'
 
 export default {
   methods: {
+    openGithub () {
+      window.open('https://github.com/jeancaffou/upn-qr', '_blank', 'noopener')
+    },
     pickXml () {
       this.$refs.xmlInput.click()
     },
