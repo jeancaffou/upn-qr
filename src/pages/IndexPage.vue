@@ -67,7 +67,8 @@ export default {
     },
     rule33: [val => val.length <= 33 || 'Največ 33 znakov'],
     img: null,
-    size: 250
+    size: 250,
+    importing: false
   }),
   created () {
     try {
@@ -157,10 +158,40 @@ export default {
     }
   },
   watch: {
+    '$route.query.upn': {
+      immediate: true,
+      handler (v) {
+        if (!v) {
+          return
+        }
+
+        const current = encodeURIComponent(JSON.stringify(this.upn))
+        if (v === current) {
+          return
+        }
+
+        try {
+          const upn = JSON.parse(decodeURIComponent(v))
+          this.importing = true
+          this.upn = {
+            ...this.upn,
+            ...upn
+          }
+        } catch (e) {
+          console.warn(e)
+        }
+      }
+    },
     upn: {
       immediate: true,
       deep: true,
       handler (v) {
+        if (this.importing) {
+          this.importing = false
+          this.gen()
+          return
+        }
+
         const upn = encodeURIComponent(JSON.stringify(v))
         localStorage.setItem('upn', upn)
         this.$router.replace({
